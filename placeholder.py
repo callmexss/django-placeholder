@@ -8,7 +8,6 @@ from PIL import Image, ImageDraw
 from django.conf import settings
 
 DEBUG = os.environ.get('DEBUG', 'on') == 'on'
-DEBUG = True
 
 SECRET_KEY = os.environ.get('SECRET_KEY',
     '%jv_4#hoaqwig2gu!eg#^ozptd*a@88u(aasv7z!7xt^5(*i&k')
