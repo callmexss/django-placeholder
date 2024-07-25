@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Placeholder Images</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.5/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans" x-data="{ 
+    serverUrl: '{{ server_url }}',
+    customWidth: 200, 
+    customHeight: 150,
+    get customImage() {
+        return `${this.serverUrl}/image/${this.customWidth}x${this.customHeight}/`;
+    },
+    copySuccess: false,
+    copyToClipboard() {
+        navigator.clipboard.writeText(this.customImage).then(() => {
+            this.copySuccess = true;
+            setTimeout(() => this.copySuccess = false, 2000);
+        });
+    }
+}">
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Django Placeholder Images</h1>
+            <a href="#custom" class="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100 transition duration-300">Create Custom</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <section class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-600">How It Works</h2>
+            <p class="mb-4">This server generates placeholder images on-the-fly. Use it to quickly mock up layouts or as temporary image placeholders in your projects.</p>
+            <p class="mb-4">To request a placeholder image, use the following URL format:</p>
+            <pre class="bg-gray-200 p-3 rounded-md text-sm mb-4 overflow-x-auto"><code class="text-blue-600 font-semibold">{{ server_url }}/image/&lt;width&gt;x&lt;height&gt;/</code></pre>
+            <p class="mb-4">Example usage in HTML:</p>
+            <pre class="bg-gray-200 p-3 rounded-md text-sm overflow-x-auto"><code>&lt;img src="{{ example }}" alt="Placeholder"&gt;</code></pre>
+        </section>
+        
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-center text-blue-600">Example Sizes</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <img src="{{ server_url }}{% url 'placeholder' width=50 height=50 %}" alt="50x50 placeholder" class="mb-2 mx-auto">
+                    <p class="text-center text-sm text-gray-600">50x50</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <img src="{{ server_url }}{% url 'placeholder' width=100 height=50 %}" alt="100x50 placeholder" class="mb-2 mx-auto">
+                    <p class="text-center text-sm text-gray-600">100x50</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+                    <img src="{{ server_url }}{% url 'placeholder' width=50 height=100 %}" alt="50x100 placeholder" class="mb-2 mx-auto">
+                    <p class="text-center text-sm text-gray-600">50x100</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="custom" class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-600">Create Custom Placeholder</h2>
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="w-full md:w-1/2">
+                    <label for="width" class="block text-sm font-medium text-gray-700 mb-1">Width: <span x-text="customWidth"></span>px</label>
+                    <input type="range" id="width" x-model="customWidth" min="50" max="800" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label for="height" class="block text-sm font-medium text-gray-700 mb-1">Height: <span x-text="customHeight"></span>px</label>
+                    <input type="range" id="height" x-model="customHeight" min="50" max="600" step="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+            <div class="mt-6 flex justify-center">
+                <div class="bg-gray-200 p-4 rounded-lg">
+                    <img x-bind:src="customImage" x-bind:alt="`${customWidth}x${customHeight} placeholder`" class="max-w-full h-auto">
+                </div>
+            </div>
+            <div class="mt-4 flex items-center justify-center">
+                <p class="text-sm text-gray-600 mr-2">URL:</p>
+                <input x-model="customImage" readonly class="bg-gray-100 px-2 py-1 rounded text-sm font-mono flex-grow">
+                <button @click="copyToClipboard" class="ml-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300 flex items-center">
+                    <span x-show="!copySuccess">Copy URL</span>
+                    <span x-show="copySuccess" class="flex items-center">
+                        Copied! <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 Django Placeholder Images. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
